@@ -1,7 +1,16 @@
 import Head from "next/head";
-import Image from "next/image";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 
 export default function Home() {
+  const session = useSession();
+  const supabase = useSupabaseClient();
+
+  console.log(session);
+
+  async function handleSignOut() {
+    const { error } = await supabase.auth.signOut();
+  }
+
   return (
     <div>
       <Head>
@@ -12,9 +21,12 @@ export default function Home() {
 
       <main>
         <h1>Hello world</h1>
-        <button className="btn">Button</button>
+        {session ? (
+          <button className="btn" onClick={handleSignOut}>
+            Sign Out
+          </button>
+        ) : null}
       </main>
-
       <footer></footer>
     </div>
   );
