@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 
 export default function Header() {
@@ -39,9 +38,15 @@ export default function Header() {
         >
           {session ? (
             <>
-              {" "}
               <li>
-                <a className="justify-between">Profile</a>
+                <Link href="/new-post" className="justify-between">
+                  Post
+                </Link>
+              </li>
+              <li>
+                <Link href="/profile" className="justify-between">
+                  Profile
+                </Link>
               </li>
               <li>
                 <button onClick={handleSignOut}>Sign Out</button>
