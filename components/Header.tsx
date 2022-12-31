@@ -39,11 +39,6 @@ export default function Header() {
           {session ? (
             <>
               <li>
-                <Link href="/new-post" className="justify-between">
-                  Post
-                </Link>
-              </li>
-              <li>
                 <Link href="/profile" className="justify-between">
                   Profile
                 </Link>
