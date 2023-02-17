@@ -19,8 +19,8 @@ export default function Home({ data }: Props) {
   return (
     <Layout>
       <Hero />
-      {data.map((item) => (
-        <HotTakeCard key={item.id} />
+      {data.map((hotTake) => (
+        <HotTakeCard key={hotTake.id} hotTake={hotTake} />
       ))}
     </Layout>
   );
@@ -33,7 +33,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data } = await supabase.from("hottakes").select("*");
+  const { data }: { data: HotTake[] | null } = await supabase
+    .from("hottakes")
+    .select("*");
 
   console.log(data);
 

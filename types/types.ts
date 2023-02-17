@@ -1,8 +1,20 @@
 export type HotTake = {
   created_at: string;
-  deleted: number;
+  deleted: 0 | 1;
   id: string;
   linked_teams: number[];
   message: string;
-  user: string;
+  user: User;
+  reactions: {
+    hot: number;
+    cold: number;
+    trash: number;
+  };
+};
+
+export type User = {
+  id: string;
+  name: string;
+  avatar: string;
+  favorite_team: number;
 };
