@@ -16,7 +16,7 @@ export default function Header() {
           NBA Hot Takes 🔥
         </Link>
       </div>
-      <div className="dropdown dropdown-end flex-none">
+      <div className="dropdown dropdown-end flex-none" tabIndex={0}>
         <button className="btn btn-square btn-ghost">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -32,10 +32,7 @@ export default function Header() {
             ></path>
           </svg>
         </button>
-        <ul
-          tabIndex={0}
-          className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52"
-        >
+        <ul className="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
           {session ? (
             <>
               <li>
