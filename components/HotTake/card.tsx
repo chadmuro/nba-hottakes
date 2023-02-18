@@ -24,7 +24,7 @@ export default function HotTakeCard({ hotTake }: Props) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col">
+      <div className="flex flex-col flex-1">
         <div className="flex justify-between items-center">
           <h4 className="text-primary-content font-bold text-lg">chadmuro</h4>
           <div className="badge">

@@ -18,10 +18,14 @@ export default function Home({ data }: Props) {
 
   return (
     <Layout>
-      <Hero />
-      {data.map((hotTake) => (
-        <HotTakeCard key={hotTake.id} hotTake={hotTake} />
-      ))}
+      <div className="max-w-screen-xl w-full flex flex-col items-center">
+        <Hero />
+        <div className="max-w-screen-sm">
+          {data.map((hotTake) => (
+            <HotTakeCard key={hotTake.id} hotTake={hotTake} />
+          ))}
+        </div>
+      </div>
     </Layout>
   );
 }

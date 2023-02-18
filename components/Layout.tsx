@@ -15,7 +15,7 @@ export default function Layout({ children }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <main className="flex-1 px-4">{children}</main>
+      <main className="flex-1 px-4 flex justify-center">{children}</main>
       <Footer />
     </div>
   );
