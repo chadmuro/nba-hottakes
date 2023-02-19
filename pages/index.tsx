@@ -37,9 +37,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     data: { session },
   } = await supabase.auth.getSession();
 
-  const { data }: { data: HotTake[] | null } = await supabase
+  const { data } = await supabase
     .from("hottakes")
-    .select("*");
+    .select(
+      `id, created_at, message, linked_teams, user(id, username, favorite_team)`
+    )
+    .neq("deleted", "1");
 
   console.log(data);
 

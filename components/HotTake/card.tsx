@@ -1,5 +1,6 @@
+import dayjs from "dayjs";
 import Image from "next/image";
-import { HotTake } from "../../types/types";
+import { HotTake, teams } from "../../types/types";
 
 interface Props {
   hotTake: HotTake;
@@ -15,28 +16,39 @@ export default function HotTakeCard({ hotTake }: Props) {
           </div>
         </div>
         <div className="avatar absolute top-10 -right-2 z-10">
-          <div className="w-8">
+          <div className="w-8 bg-white rounded-full">
             <Image
-              src="https://njbaysarqhupdtmikdvd.supabase.co/storage/v1/object/public/logos/DAL_logo.svg"
+              src={teams[hotTake.user.favorite_team].logo_path}
               alt="team logo"
               fill
+              className="p-1"
             />
           </div>
         </div>
       </div>
       <div className="flex flex-col flex-1">
         <div className="flex justify-between items-center">
-          <h4 className="text-primary-content font-bold text-lg">chadmuro</h4>
-          <div className="badge">
-            <Image
-              src="https://njbaysarqhupdtmikdvd.supabase.co/storage/v1/object/public/logos/DAL_logo.svg"
-              alt="team logo"
-              width={16}
-              height={16}
-              className="mr-1"
-            />
-            Mavericks
+          <div>
+            <h4 className="text-primary-content font-bold text-lg leading-5">
+              {hotTake.user.username}
+            </h4>
+            <h5 className="text-xs">
+              {dayjs(hotTake.created_at).format("YYYY-MM-DD")}
+            </h5>
           </div>
+          {hotTake.linked_teams.length > 0 &&
+            hotTake.linked_teams.map((team) => (
+              <div className="badge" key={team}>
+                <Image
+                  src={teams[team].logo_path}
+                  alt={teams[team].full_name}
+                  width={16}
+                  height={16}
+                  className="mr-1"
+                />
+                {teams[team].name}
+              </div>
+            ))}
         </div>
         <p className="text-primary-content">{hotTake.message}</p>
         <div className="flex gap-4 self-end pt-4">
