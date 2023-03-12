@@ -1,4 +1,6 @@
+import { GetServerSidePropsContext } from "next";
 import React, { useState } from "react";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import Layout from "../components/Layout";
 import { Team, teams } from "../types/teams";
 
@@ -38,7 +40,7 @@ export default function NewPost() {
           <textarea
             required
             maxLength={HOT_TAKE_LENGTH}
-            className="textarea textarea-primary w-full"
+            className="textarea text-[16px] textarea-primary w-full"
             placeholder="Enter your hot take..."
             rows={5}
             value={hotTake}
@@ -76,3 +78,24 @@ export default function NewPost() {
     </Layout>
   );
 }
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const supabase = createServerSupabaseClient(ctx);
+
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};
