@@ -35,7 +35,7 @@ export default function Login() {
 
   return (
     <Layout>
-      <div className="w-full my-auto flex flex-col justify-center items-center pt-16 text-center max-w-sm mt-0">
+      <div className="flex flex-col items-center pt-16 text-center max-w-sm">
         <h2 className="text-xl">Welcome to NBA Hot Takes 🔥</h2>
         <p>Login to start posting and reacting to your best NBA Hot Takes!</p>
         {!!error && (

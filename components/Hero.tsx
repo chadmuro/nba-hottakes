@@ -14,7 +14,7 @@ export default function Hero() {
       <div className="hero-overlay bg-opacity-60"></div>
       <div className="hero-content text-center text-neutral-content py-48">
         <div className="max-w-md prose">
-          <h1 className="">NBA Hot Takes</h1>
+          <h1>NBA Hot Takes</h1>
           <div className="mb-5 text-xl">
             <h3 className="mb-5">Fire takes for the NBA</h3>
             <h4>🔥 = Hot take</h4>
