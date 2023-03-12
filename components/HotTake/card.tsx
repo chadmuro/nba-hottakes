@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import Image from "next/image";
-import { HotTake, teams } from "../../types/types";
+import { HotTake } from "../../types/common";
+import { teams } from "../../types/teams";
 
 interface Props {
   hotTake: HotTake;

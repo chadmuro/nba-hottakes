@@ -5,7 +5,7 @@ import HotTakeCard from "../components/HotTake/card";
 import { GetServerSideProps } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "../types/supabase";
-import { HotTake } from "../types/types";
+import { HotTake } from "../types/common";
 
 interface Props {
   data: HotTake[];
