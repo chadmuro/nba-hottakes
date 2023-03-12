@@ -13,13 +13,13 @@ export default function Hero() {
     >
       <div className="hero-overlay bg-opacity-60"></div>
       <div className="hero-content text-center text-neutral-content py-48">
-        <div className="max-w-md">
-          <h1 className="mb-5 text-5xl font-bold">NBA Hot Takes</h1>
+        <div className="max-w-md prose">
+          <h1 className="">NBA Hot Takes</h1>
           <div className="mb-5 text-xl">
-            <p className="mb-5">Fire takes for the NBA</p>
-            <p>🔥 = Hot take</p>
-            <p>❄️ = Cold take</p>
-            <p>🗑 = Trash</p>
+            <h3 className="mb-5">Fire takes for the NBA</h3>
+            <h4>🔥 = Hot take</h4>
+            <h4>❄️ = Cold take</h4>
+            <h4>🗑 = Trash</h4>
           </div>
           {session ? (
             <Link href="/new-post" className="btn btn-primary">

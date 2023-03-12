@@ -11,11 +11,11 @@ export default function Header() {
 
   return (
     <div className="navbar bg-base-100">
-      <div className="flex-1">
+      <h2 className="flex-1">
         <Link href="/" className="btn btn-ghost normal-case text-xl">
           NBA Hot Takes 🔥
         </Link>
-      </div>
+      </h2>
       <div className="dropdown dropdown-end flex-none" tabIndex={0}>
         <button className="btn btn-square btn-ghost">
           <svg
