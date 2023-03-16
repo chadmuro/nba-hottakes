@@ -24,9 +24,19 @@ export default function NewPost() {
     setSelectedTeam(parseInt(e.target.value, 10) as Team);
   }
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     console.log(hotTake, selectedTeam);
+
+    const data = {
+      message: hotTake,
+      linked_team: selectedTeam,
+    };
+
+    const response = await fetch("/api/v1/hottake", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
   }
 
   return (

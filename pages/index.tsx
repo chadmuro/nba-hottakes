@@ -42,7 +42,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .select(
       `id, created_at, message, linked_teams, user(id, username, favorite_team)`
     )
-    .neq("deleted", "1");
+    .neq("deleted", "1")
+    .order("created_at", { ascending: false });
 
   console.log(data);
 
