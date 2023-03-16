@@ -41,6 +41,11 @@ export default function Header() {
                 </Link>
               </li>
               <li>
+                <Link href="/new-post" className="justify-between">
+                  New Post
+                </Link>
+              </li>
+              <li>
                 <button onClick={handleSignOut}>Sign Out</button>
               </li>
             </>
