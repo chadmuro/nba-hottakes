@@ -9,7 +9,7 @@ interface Props {
 
 export default function HotTakeCard({ hotTake }: Props) {
   return (
-    <article className="border border-secondary bg-primary rounded-2xl flex gap-4 p-2">
+    <article className="border border-secondary bg-primary rounded-2xl flex gap-4 p-2 mb-4">
       <div className="relative">
         <div className="avatar">
           <div className="w-16 rounded-full">
@@ -34,7 +34,7 @@ export default function HotTakeCard({ hotTake }: Props) {
               {hotTake.user.username}
             </h4>
             <h5 className="text-xs">
-              {dayjs(hotTake.created_at).format("YYYY-MM-DD")}
+              {dayjs(hotTake.created_at).format("YYYY-MM-DD HH:mm")}
             </h5>
           </div>
           {hotTake.linked_teams.length > 0 &&

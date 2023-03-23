@@ -20,7 +20,7 @@ export default function Home({ data }: Props) {
     <Layout>
       <div className="max-w-screen-xl w-full flex flex-col items-center">
         <Hero />
-        <div className="max-w-screen-sm">
+        <div className=" mt-16 max-w-screen-sm">
           {data.map((hotTake) => (
             <HotTakeCard key={hotTake.id} hotTake={hotTake} />
           ))}
@@ -44,8 +44,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     )
     .neq("deleted", "1")
     .order("created_at", { ascending: false });
-
-  console.log(data);
 
   return {
     props: {

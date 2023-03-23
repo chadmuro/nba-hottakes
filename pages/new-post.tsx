@@ -1,5 +1,6 @@
 import { GetServerSidePropsContext } from "next";
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import Layout from "../components/Layout";
 import { Team, teams } from "../types/teams";
@@ -7,6 +8,7 @@ import { Team, teams } from "../types/teams";
 const HOT_TAKE_LENGTH = 180;
 
 export default function NewPost() {
+  const router = useRouter();
   const [hotTake, setHotTake] = useState("");
   const [selectedTeam, setSelectedTeam] = useState<Team | "">("");
   const [hotTakeLengthError, setHotTakeLengthError] = useState(false);
@@ -26,7 +28,6 @@ export default function NewPost() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(hotTake, selectedTeam);
 
     const data = {
       message: hotTake,
@@ -37,6 +38,13 @@ export default function NewPost() {
       method: "POST",
       body: JSON.stringify(data),
     });
+    const responseData = await response.json();
+
+    if (responseData.type === "success") {
+      router.push("/");
+    } else {
+      console.log(responseData.error.message);
+    }
   }
 
   return (

@@ -59,6 +59,13 @@ export default async function handler(
     ])
     .select();
 
+  if (error) {
+    res.status(500).json({
+      type: "error",
+      error: { message: error.message },
+    });
+  }
+
   res
     .status(200)
     .json({ type: "success", success: { data: data ? data[0] : null } });
