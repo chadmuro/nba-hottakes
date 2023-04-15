@@ -1,7 +1,7 @@
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import Layout from "../components/Layout";
 import Hero from "../components/Hero";
-import HotTakeCard from "../components/HotTake/card";
+import HotTakeCard from "../components/HotTake/HotTake";
 import { GetServerSideProps } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "../types/supabase";

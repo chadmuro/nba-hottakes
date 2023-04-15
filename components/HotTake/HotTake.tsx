@@ -4,14 +4,20 @@ import { HotTake, ReactionEnum } from "../../types/common";
 import { teams } from "../../types/teams";
 import { calculateReactions } from "../../utils/calculateReactions";
 import { useReaction } from "../../contexts/reactionContext";
+import ReactionButton from "./ReactionButton";
 
 interface Props {
   hotTake: HotTake;
 }
 
 export default function HotTakeCard({ hotTake }: Props) {
-  const { addReaction } = useReaction();
+  const { reactions, loading, addReaction } = useReaction();
   const { fire, cold, trash } = calculateReactions(hotTake.reactions);
+  console.log(reactions);
+
+  const hotTakeReactions = reactions.filter(
+    (reaction) => reaction.hottake === hotTake.id
+  );
 
   return (
     <article className="border border-secondary bg-primary rounded-2xl flex gap-4 p-2 mb-4">
@@ -63,24 +69,24 @@ export default function HotTakeCard({ hotTake }: Props) {
         </div>
         <p className="text-primary-content">{hotTake.message}</p>
         <div className="flex gap-4 self-end pt-4">
-          <button
-            className="bg-primary-focus text-primary-content border border-primary-content rounded-2xl py-1 px-2 cursor-pointer"
-            onClick={() => addReaction(hotTake.id, ReactionEnum.fire)}
-          >
-            🔥 {fire}
-          </button>
-          <button
-            className="bg-primary-focus text-primary-content border border-primary-content rounded-2xl py-1 px-2 cursor-pointer"
-            onClick={() => addReaction(hotTake.id, ReactionEnum.cold)}
-          >
-            ❄️ {cold}
-          </button>
-          <button
-            className="bg-primary-focus text-primary-content border border-primary-content rounded-2xl py-1 px-2 cursor-pointer"
-            onClick={() => addReaction(hotTake.id, ReactionEnum.trash)}
-          >
-            🗑 {trash}
-          </button>
+          <ReactionButton
+            text={`🔥 ${fire}`}
+            reaction={ReactionEnum.fire}
+            hotTakeId={hotTake.id}
+            hotTakeReactions={hotTakeReactions}
+          />
+          <ReactionButton
+            text={`❄️ ${cold}`}
+            reaction={ReactionEnum.cold}
+            hotTakeId={hotTake.id}
+            hotTakeReactions={hotTakeReactions}
+          />
+          <ReactionButton
+            text={`🗑 ${trash}`}
+            reaction={ReactionEnum.trash}
+            hotTakeId={hotTake.id}
+            hotTakeReactions={hotTakeReactions}
+          />
         </div>
       </div>
     </article>

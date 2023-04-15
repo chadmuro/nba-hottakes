@@ -1,11 +1,18 @@
-import { createContext, PropsWithChildren, useContext } from "react";
+import { useSession } from "@supabase/auth-helpers-react";
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
 import { Reaction, ReactionEnum } from "../types/common";
 
 type ReactionContextType = {
-  // reactions: Reaction[];
+  reactions: Reaction[];
   addReaction: (hottakeId: string, reaction: ReactionEnum) => void;
   // deleteReaction: (reactiunId: string) => void;
-  // loading: boolean;
+  loading: boolean;
 };
 
 export const ReactionContext = createContext<ReactionContextType | undefined>(
@@ -13,6 +20,34 @@ export const ReactionContext = createContext<ReactionContextType | undefined>(
 );
 
 const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
+  const session = useSession();
+  const [loading, setLoading] = useState(false);
+  const [reactions, setReactions] = useState<Reaction[]>([]);
+
+  useEffect(() => {
+    async function getReactions() {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/v1/reaction", {
+          method: "GET",
+        });
+        console.log(res);
+        if (res.status === 200) {
+          const data = await res.json();
+          console.log(data);
+          setReactions(data.success.data);
+        }
+      } catch (err) {
+        setReactions([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    if (session) {
+      getReactions();
+    }
+  }, [session]);
+
   async function addReaction(hottakeId: string, reaction: ReactionEnum) {
     try {
       const res = await fetch("/api/v1/reaction", {
@@ -26,14 +61,14 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
       if (res.status === 200) {
         const data = await res.json();
         // TODO: add data to reactions array
-        console.log(data);
+        // console.log(data);
       }
     } catch (err) {
       // TODO: display toast
     }
   }
 
-  const value = { addReaction };
+  const value = { reactions, loading, addReaction };
 
   return (
     <ReactionContext.Provider value={value}>

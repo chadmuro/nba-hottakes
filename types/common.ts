@@ -32,6 +32,7 @@ export type User = {
 
 export type Reaction = {
   id: string;
+  hottake: string;
   reaction: ReactionEnum;
 };
 
