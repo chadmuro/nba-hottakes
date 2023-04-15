@@ -43,7 +43,8 @@ export default function NewPost() {
     if (responseData.type === "success") {
       router.push("/");
     } else {
-      console.log(responseData.error.message);
+      // TODO: Display toast
+      // console.log(responseData.error.message);
     }
   }
 

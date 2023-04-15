@@ -31,10 +31,8 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
         const res = await fetch("/api/v1/reaction", {
           method: "GET",
         });
-        console.log(res);
         if (res.status === 200) {
           const data = await res.json();
-          console.log(data);
           setReactions(data.success.data);
         }
       } catch (err) {
@@ -45,6 +43,8 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
     }
     if (session) {
       getReactions();
+    } else {
+      setReactions([]);
     }
   }, [session]);
 
@@ -61,7 +61,6 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
       if (res.status === 200) {
         const data = await res.json();
         // TODO: add data to reactions array
-        // console.log(data);
       }
     } catch (err) {
       // TODO: display toast

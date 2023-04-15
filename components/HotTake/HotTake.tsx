@@ -11,9 +11,8 @@ interface Props {
 }
 
 export default function HotTakeCard({ hotTake }: Props) {
-  const { reactions, loading, addReaction } = useReaction();
+  const { reactions } = useReaction();
   const { fire, cold, trash } = calculateReactions(hotTake.reactions);
-  console.log(reactions);
 
   const hotTakeReactions = reactions.filter(
     (reaction) => reaction.hottake === hotTake.id

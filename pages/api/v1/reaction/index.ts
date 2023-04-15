@@ -54,8 +54,6 @@ export default async function handler(
       .select(`id, reaction, hottake`)
       .eq("user", session.user.id);
 
-    console.log(data);
-
     return res
       .status(200)
       .json({ type: "success", success: { data: data ? data : null } });
