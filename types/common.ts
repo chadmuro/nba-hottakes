@@ -20,11 +20,7 @@ export type HotTake = {
   linked_teams: Team[];
   message: string;
   user: User;
-  reactions: {
-    hot: number;
-    cold: number;
-    trash: number;
-  };
+  reactions: Reaction[];
 };
 
 export type User = {
@@ -35,12 +31,11 @@ export type User = {
 };
 
 export type Reaction = {
-  user_id: string;
-  hottake_id: string;
+  id: string;
   reaction: ReactionEnum;
 };
 
-enum ReactionEnum {
+export enum ReactionEnum {
   "fire",
   "cold",
   "trash",

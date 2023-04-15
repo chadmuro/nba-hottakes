@@ -1,6 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "../../../../types/supabase";
+import { ReactionEnum } from "../../../../types/common";
+
+type ApiData = {
+  data: {
+    created_at: string;
+    hottake: string;
+    id: string;
+    reaction: ReactionEnum;
+    user: string;
+  } | null;
+};
 
 export default async function handler(
   req: NextApiRequest,
