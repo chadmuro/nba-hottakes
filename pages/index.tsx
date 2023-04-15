@@ -40,10 +40,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { data } = await supabase
     .from("hottakes")
     .select(
-      `id, created_at, message, linked_teams, user(id, username, favorite_team)`
+      `id, created_at, message, linked_teams, user(id, username, favorite_team), reactions(id, reaction)`
     )
     .neq("deleted", "1")
     .order("created_at", { ascending: false });
+
+  console.log(data);
 
   return {
     props: {

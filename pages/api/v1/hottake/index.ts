@@ -1,37 +1,25 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { Database, Json } from "../../../../types/supabase";
-import { HotTake } from "../../../../types/common";
+import { ResponseData } from "../../../../types/common";
 
-type ErrorData = {
-  type: "error";
-  error: { message: string };
-  success?: never;
+type ApiData = {
+  data: {
+    created_at: string | null;
+    deleted: number | null;
+    id: string;
+    linked_teams: Json;
+    message: string | null;
+    user: string | null;
+  } | null;
 };
-
-type SuccessData = {
-  type: "success";
-  error?: never;
-  success: {
-    data: {
-      created_at: string | null;
-      deleted: number | null;
-      id: string;
-      linked_teams: Json;
-      message: string | null;
-      user: string | null;
-    } | null;
-  };
-};
-
-type ResponseData = ErrorData | SuccessData;
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
+  res: NextApiResponse<ResponseData<ApiData>>
 ) {
   if (req.method !== "POST") {
-    res.status(500).json({
+    return res.status(500).json({
       type: "error",
       error: { message: "This method is not available" },
     });
@@ -48,12 +36,19 @@ export default async function handler(
     data: { session },
   } = await supabase.auth.getSession();
 
+  if (!session?.user.id) {
+    return res.status(403).json({
+      type: "error",
+      error: { message: "User is not signed in" },
+    });
+  }
+
   const { data, error } = await supabase
     .from("hottakes")
     .insert([
       {
         message,
-        user: session?.user.id,
+        user: session.user.id,
         linked_teams: [linked_team],
       },
     ])

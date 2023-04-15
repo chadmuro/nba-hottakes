@@ -44,7 +44,7 @@ export interface Database {
           id: string;
           linked_teams: Json | null;
           message: string | null;
-          user: string | null;
+          user: string;
         };
         Insert: {
           created_at?: string | null;
@@ -52,7 +52,7 @@ export interface Database {
           id?: string;
           linked_teams?: Json | null;
           message?: string | null;
-          user?: string | null;
+          user: string;
         };
         Update: {
           created_at?: string | null;
@@ -60,7 +60,7 @@ export interface Database {
           id?: string;
           linked_teams?: Json | null;
           message?: string | null;
-          user?: string | null;
+          user?: string;
         };
       };
       reactions: {
@@ -69,21 +69,21 @@ export interface Database {
           hottake: string | null;
           id: string;
           reaction: number | null;
-          user: string | null;
+          user: string;
         };
         Insert: {
           created_at?: string | null;
           hottake?: string | null;
-          id: string;
+          id?: string;
           reaction?: number | null;
-          user?: string | null;
+          user: string;
         };
         Update: {
           created_at?: string | null;
           hottake?: string | null;
           id?: string;
           reaction?: number | null;
-          user?: string | null;
+          user?: string;
         };
       };
       teams: {
@@ -126,7 +126,6 @@ export interface Database {
       };
       users: {
         Row: {
-          auth: string | null;
           created_at: string | null;
           favorite_team: number | null;
           id: string;
@@ -134,15 +133,13 @@ export interface Database {
           username: string | null;
         };
         Insert: {
-          auth?: string | null;
           created_at?: string | null;
           favorite_team?: number | null;
-          id?: string;
+          id: string;
           updated_at?: string | null;
           username?: string | null;
         };
         Update: {
-          auth?: string | null;
           created_at?: string | null;
           favorite_team?: number | null;
           id?: string;
