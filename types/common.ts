@@ -26,7 +26,7 @@ export type HotTake = {
 export type User = {
   id: string;
   username: string;
-  avatar: string;
+  // avatar: string;
   favorite_team: Team;
 };
 
