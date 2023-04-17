@@ -15,23 +15,28 @@ export default function ReactionButton({
   hotTakeId,
   hotTakeReactions,
 }: Props) {
-  const { loading, addReaction } = useReaction();
+  const { loading, addReaction, deleteReaction, updating } = useReaction();
   const session = useSession();
 
+  const selectedReaction = hotTakeReactions.find(
+    (htReaction) => htReaction.reaction === reaction
+  );
+
   function onReactionClick() {
-    if (!session?.user.id) {
+    if (!session?.user.id || updating) {
       return;
     }
-    addReaction(hotTakeId, reaction);
+    if (selectedReaction) {
+      return deleteReaction(selectedReaction.id);
+    }
+    return addReaction(hotTakeId, reaction);
   }
 
   return (
     <label
       htmlFor={session?.user.id ? "" : "login-modal"}
       className={`text-primary-content border border-primary-content rounded-2xl py-1 px-2 cursor-pointer ${
-        hotTakeReactions.find((htReaction) => htReaction.reaction === reaction)
-          ? "bg-accent"
-          : "bg-primary-focus"
+        selectedReaction ? "bg-accent" : "bg-primary-focus"
       } ${loading ? "pointer-events-none" : "pointer-events-auto"}`}
       onClick={onReactionClick}
     >

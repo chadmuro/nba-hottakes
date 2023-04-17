@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function Home({ data }: Props) {
-  console.log(data);
+  // console.log(data);
   const session = useSession();
   const supabase = useSupabaseClient();
 

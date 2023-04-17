@@ -11,8 +11,9 @@ import { Reaction, ReactionEnum } from "../types/common";
 type ReactionContextType = {
   reactions: Reaction[];
   addReaction: (hottakeId: string, reaction: ReactionEnum) => void;
-  // deleteReaction: (reactiunId: string) => void;
+  deleteReaction: (reactionId: string) => void;
   loading: boolean;
+  updating: boolean;
 };
 
 export const ReactionContext = createContext<ReactionContextType | undefined>(
@@ -21,6 +22,7 @@ export const ReactionContext = createContext<ReactionContextType | undefined>(
 
 const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
   const session = useSession();
+  const [updating, setUpdating] = useState(false);
   const [loading, setLoading] = useState(false);
   const [reactions, setReactions] = useState<Reaction[]>([]);
 
@@ -50,6 +52,7 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
 
   async function addReaction(hottakeId: string, reaction: ReactionEnum) {
     try {
+      setUpdating(true);
       const res = await fetch("/api/v1/reaction", {
         method: "POST",
         body: JSON.stringify({
@@ -60,14 +63,48 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
 
       if (res.status === 200) {
         const data = await res.json();
-        // TODO: add data to reactions array
+        setReactions((prevReactions) => [
+          ...prevReactions,
+          {
+            hottake: data.success.data.hottake,
+            id: data.success.data.id,
+            reaction: data.success.data.reaction,
+          },
+        ]);
       }
     } catch (err) {
       // TODO: display toast
+    } finally {
+      setUpdating(false);
     }
   }
 
-  const value = { reactions, loading, addReaction };
+  async function deleteReaction(reactionId: string) {
+    try {
+      setUpdating(true);
+      const res = await fetch("/api/v1/reaction", {
+        method: "DELETE",
+        body: JSON.stringify({
+          reaction_id: reactionId,
+        }),
+      });
+
+      if (res.status === 200) {
+        const data = await res.json();
+        const deletedReaction = data.success.data.reaction_id;
+
+        setReactions((prevReactions) =>
+          prevReactions.filter((reaction) => reaction.id !== deletedReaction)
+        );
+      }
+    } catch (err) {
+      // TODO: display toast
+    } finally {
+      setUpdating(false);
+    }
+  }
+
+  const value = { reactions, loading, updating, addReaction, deleteReaction };
 
   return (
     <ReactionContext.Provider value={value}>

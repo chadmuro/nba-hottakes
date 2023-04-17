@@ -20,6 +20,12 @@ type PostApiData = {
   } | null;
 };
 
+type DeleteApiData = {
+  data: {
+    reaction_id: string;
+  };
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -90,5 +96,26 @@ export default async function handler(
 
   if (req.method === "DELETE") {
     const reaction_id = body["reaction_id"];
+
+    const { error } = await supabase
+      .from("reactions")
+      .delete()
+      .eq("id", reaction_id);
+
+    if (error) {
+      return res.status(500).json({
+        type: "error",
+        error: { message: error.message },
+      });
+    }
+
+    return res.status(200).json({
+      type: "success",
+      success: {
+        data: {
+          reaction_id,
+        },
+      },
+    });
   }
 }
