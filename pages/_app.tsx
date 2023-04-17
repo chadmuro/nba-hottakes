@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createBrowserSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import { ReactionProvider } from "../contexts/reactionContext";
+import { HotTakeProvider } from "../contexts/hotTakeContext";
 
 export default function App({
   Component,
@@ -19,9 +20,11 @@ export default function App({
       supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
-      <ReactionProvider>
-        <Component {...pageProps} />
-      </ReactionProvider>
+      <HotTakeProvider>
+        <ReactionProvider>
+          <Component {...pageProps} />
+        </ReactionProvider>
+      </HotTakeProvider>
     </SessionContextProvider>
   );
 }
