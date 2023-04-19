@@ -14,18 +14,20 @@ export default function ToasterComponent() {
   }, [toasts]);
 
   return (
-    <Toaster position="top-right">
-      {(t) => {
-        return (
-          <div
-            className={`absolute alert alert-${t.type} max-w-xs display justify-center`}
-          >
-            <p className="text-primary-content text-center">
-              {resolveValue(t.message, t)}
-            </p>
-          </div>
-        );
+    <Toaster
+      position="top-right"
+      containerStyle={{
+        maxWidth: "26rem",
+        marginLeft: "auto",
+        marginRight: "auto",
       }}
-    </Toaster>
+      toastOptions={{
+        style: {
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
+          color: "#fff",
+          fontSize: "16px",
+        },
+      }}
+    />
   );
 }
