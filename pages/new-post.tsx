@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import Layout from "../components/Layout";
 import { Team, teams } from "../types/teams";
+import { useHotTake } from "../contexts/hotTakeContext";
 
 const HOT_TAKE_LENGTH = 180;
 
@@ -12,6 +13,7 @@ export default function NewPost() {
   const [hotTake, setHotTake] = useState("");
   const [selectedTeam, setSelectedTeam] = useState<Team | "">("");
   const [hotTakeLengthError, setHotTakeLengthError] = useState(false);
+  const { refreshHotTakes } = useHotTake();
 
   function onChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setHotTake(e.target.value);
@@ -41,6 +43,7 @@ export default function NewPost() {
     const responseData = await response.json();
 
     if (responseData.type === "success") {
+      refreshHotTakes();
       router.push("/");
     } else {
       // TODO: Display toast
