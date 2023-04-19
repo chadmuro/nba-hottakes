@@ -8,11 +8,12 @@ import {
 } from "react";
 import { toast } from "react-hot-toast";
 import { get_error_message, Reaction, ReactionEnum } from "../types/common";
+import { useHotTake } from "./hotTakeContext";
 
 type ReactionContextType = {
   reactions: Reaction[];
   addReaction: (hottakeId: string, reaction: ReactionEnum) => void;
-  deleteReaction: (reactionId: string) => void;
+  deleteReaction: (reactionId: string, hotTakeId: string) => void;
   loading: boolean;
   updating: boolean;
 };
@@ -26,6 +27,7 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
   const [updating, setUpdating] = useState(false);
   const [loading, setLoading] = useState(false);
   const [reactions, setReactions] = useState<Reaction[]>([]);
+  const { updateHotTake } = useHotTake();
 
   useEffect(() => {
     async function getReactions() {
@@ -72,6 +74,12 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
             reaction: data.success.data.reaction,
           },
         ]);
+        updateHotTake(
+          data.success.data.id,
+          "add",
+          hottakeId,
+          data.success.data.reaction
+        );
         toast.success("Reaction added!");
       }
     } catch (err) {
@@ -81,13 +89,14 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
     }
   }
 
-  async function deleteReaction(reactionId: string) {
+  async function deleteReaction(reactionId: string, hotTakeId: string) {
     try {
       setUpdating(true);
       const res = await fetch("/api/v1/reaction", {
         method: "DELETE",
         body: JSON.stringify({
           reaction_id: reactionId,
+          hottake_id: hotTakeId,
         }),
       });
 
@@ -97,6 +106,12 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
 
         setReactions((prevReactions) =>
           prevReactions.filter((reaction) => reaction.id !== deletedReaction)
+        );
+        updateHotTake(
+          data.success.data.reaction_id,
+          "delete",
+          data.success.data.hottake_id,
+          undefined
         );
         toast.success("Reaction removed!");
       }

@@ -27,7 +27,7 @@ export default function ReactionButton({
       return;
     }
     if (selectedReaction) {
-      return deleteReaction(selectedReaction.id);
+      return deleteReaction(selectedReaction.id, hotTakeId);
     }
     return addReaction(hotTakeId, reaction);
   }

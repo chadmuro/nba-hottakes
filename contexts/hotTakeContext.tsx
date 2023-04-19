@@ -6,14 +6,19 @@ import {
   useState,
   useEffect,
 } from "react";
-import { HotTake } from "../types/common";
+import { HotTake, Reaction, ReactionEnum } from "../types/common";
 
 type HotTakeContextType = {
   loading: boolean;
   hotTakes: HotTake[];
   count: number | null;
   refreshHotTakes: () => Promise<void>;
-  // updateHotTake: (hotTakeId: string) => void;
+  updateHotTake: (
+    reactionId: string,
+    type: "add" | "delete",
+    hotTakeId: string,
+    reaction?: ReactionEnum
+  ) => Promise<void>;
 };
 
 export const HotTakeContext = createContext<HotTakeContextType | undefined>(
@@ -26,29 +31,6 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
   const [hotTakes, setHotTakes] = useState<HotTake[]>([]);
 
   const supabase = useSupabaseClient();
-
-  async function refreshHotTakes() {
-    try {
-      setLoading(true);
-      const { data, count: numberOfHotTakes } = await supabase
-        .from("hottakes")
-        .select(
-          `id, created_at, message, linked_teams, user(id, username, favorite_team), reactions(id, reaction)`,
-          { count: "exact" }
-        )
-        .neq("deleted", "1")
-        .order("created_at", { ascending: false })
-        .limit(5);
-
-      setHotTakes(data as HotTake[]);
-      setCount(numberOfHotTakes);
-    } catch (err) {
-      setCount(null);
-      setHotTakes([]);
-    } finally {
-      setLoading(false);
-    }
-  }
 
   useEffect(() => {
     async function getHotTakes() {
@@ -77,7 +59,68 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
     getHotTakes();
   }, [supabase]);
 
-  const value = { loading, count, hotTakes, refreshHotTakes };
+  async function refreshHotTakes() {
+    try {
+      setLoading(true);
+      const { data, count: numberOfHotTakes } = await supabase
+        .from("hottakes")
+        .select(
+          `id, created_at, message, linked_teams, user(id, username, favorite_team), reactions(id, reaction)`,
+          { count: "exact" }
+        )
+        .neq("deleted", "1")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      setHotTakes(data as HotTake[]);
+      setCount(numberOfHotTakes);
+    } catch (err) {
+      setCount(null);
+      setHotTakes([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function updateHotTake(
+    reactionId: string,
+    type: "add" | "delete",
+    hotTakeId: string,
+    reaction?: ReactionEnum
+  ) {
+    setHotTakes((prevData) => {
+      const selectedHotTakeIndex = prevData.findIndex(
+        (take) => take.id === hotTakeId
+      );
+      let selectedHotTake = prevData.find((take) => take.id === hotTakeId);
+
+      if (selectedHotTake) {
+        if (
+          type === "add" &&
+          hotTakeId !== undefined &&
+          reaction !== undefined
+        ) {
+          selectedHotTake = {
+            ...selectedHotTake,
+            reactions: [
+              ...selectedHotTake.reactions,
+              { id: reactionId, hottake: hotTakeId, reaction },
+            ],
+          };
+        }
+        if (type === "delete") {
+          const newReactions = selectedHotTake.reactions.filter(
+            (reaction) => reaction.id !== reactionId
+          );
+          selectedHotTake.reactions = [...newReactions];
+        }
+        prevData[selectedHotTakeIndex] = selectedHotTake;
+      }
+      return [...prevData];
+    });
+  }
+
+  const value = { loading, count, hotTakes, refreshHotTakes, updateHotTake };
 
   return (
     <HotTakeContext.Provider value={value}>{children}</HotTakeContext.Provider>

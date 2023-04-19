@@ -96,6 +96,7 @@ export default async function handler(
 
   if (req.method === "DELETE") {
     const reaction_id = body["reaction_id"];
+    const hottake_id = body["hottake_id"];
 
     const { error } = await supabase
       .from("reactions")
@@ -114,6 +115,7 @@ export default async function handler(
       success: {
         data: {
           reaction_id,
+          hottake_id,
         },
       },
     });
