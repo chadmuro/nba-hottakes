@@ -18,7 +18,7 @@ export default function ToasterComponent() {
       {(t) => {
         return (
           <div
-            className={`alert alert-${t.type} max-w-xs display justify-center`}
+            className={`absolute alert alert-${t.type} max-w-xs display justify-center`}
           >
             <p className="text-primary-content text-center">
               {resolveValue(t.message, t)}
