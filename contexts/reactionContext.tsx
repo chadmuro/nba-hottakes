@@ -6,7 +6,8 @@ import {
   useState,
   useEffect,
 } from "react";
-import { Reaction, ReactionEnum } from "../types/common";
+import { toast } from "react-hot-toast";
+import { get_error_message, Reaction, ReactionEnum } from "../types/common";
 
 type ReactionContextType = {
   reactions: Reaction[];
@@ -71,9 +72,10 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
             reaction: data.success.data.reaction,
           },
         ]);
+        toast.success("Reaction added!");
       }
     } catch (err) {
-      // TODO: display toast
+      toast.error(get_error_message(err));
     } finally {
       setUpdating(false);
     }
@@ -96,9 +98,10 @@ const ReactionProvider = ({ children }: PropsWithChildren<{}>) => {
         setReactions((prevReactions) =>
           prevReactions.filter((reaction) => reaction.id !== deletedReaction)
         );
+        toast.success("Reaction removed!");
       }
     } catch (err) {
-      // TODO: display toast
+      toast.error(get_error_message(err));
     } finally {
       setUpdating(false);
     }

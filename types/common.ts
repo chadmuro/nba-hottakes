@@ -41,3 +41,9 @@ export enum ReactionEnum {
   "cold",
   "trash",
 }
+
+// creates error message from try/catch unknown error
+export function get_error_message(error: unknown) {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}

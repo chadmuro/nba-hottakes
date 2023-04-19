@@ -2,9 +2,11 @@ import { GetServerSidePropsContext } from "next";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { toast } from "react-hot-toast";
 import Layout from "../components/Layout";
 import { Team, teams } from "../types/teams";
 import { useHotTake } from "../contexts/hotTakeContext";
+import { HotTake, ResponseData } from "../types/common";
 
 const HOT_TAKE_LENGTH = 180;
 
@@ -40,14 +42,14 @@ export default function NewPost() {
       method: "POST",
       body: JSON.stringify(data),
     });
-    const responseData = await response.json();
+    const responseData: ResponseData<HotTake> = await response.json();
 
     if (responseData.type === "success") {
+      toast.success("New hot take added!");
       refreshHotTakes();
       router.push("/");
     } else {
-      // TODO: Display toast
-      // console.log(responseData.error.message);
+      toast.error(responseData.error.message);
     }
   }
 
