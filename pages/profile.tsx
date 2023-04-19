@@ -1,21 +1,26 @@
 import { useState } from "react";
 import { GetServerSidePropsContext } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { toast } from "react-hot-toast";
 import Layout from "../components/Layout";
 import { Team, teams } from "../types/teams";
-import { User } from "../types/common";
+import { ResponseData, User } from "../types/common";
+import { useHotTake } from "../contexts/hotTakeContext";
 
 interface Props {
   data: User;
 }
 
 export default function Profile({ data }: Props) {
+  const [updating, setUpdating] = useState(false);
   const [username, setUsername] = useState(data.username);
   const [selectedTeam, setSelectedTeam] = useState<Team | "">(
     data.favorite_team
   );
+  const { refreshHotTakes } = useHotTake();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    setUpdating(true);
     e.preventDefault();
 
     const data = {
@@ -28,15 +33,16 @@ export default function Profile({ data }: Props) {
       body: JSON.stringify(data),
     });
 
-    const responseData = await response.json();
+    const responseData: ResponseData<User> = await response.json();
 
     if (responseData.type === "success") {
-      console.log(responseData);
-      // router.push("/");
+      refreshHotTakes();
+      toast.success("Profile updated!");
     } else {
-      // TODO: Display toast
-      // console.log(responseData.error.message);
+      toast.error(responseData.error.message);
     }
+
+    setUpdating(false);
   }
 
   function onSelect(e: React.ChangeEvent<HTMLSelectElement>) {
@@ -76,7 +82,7 @@ export default function Profile({ data }: Props) {
               );
             })}
           </select>
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-primary" disabled={updating}>
             Submit
           </button>
         </form>
