@@ -37,6 +37,7 @@ export default async function handler(
     .update({
       username,
       favorite_team,
+      updated_at: new Date().toISOString(),
     })
     .eq("id", session.user.id)
     .select();

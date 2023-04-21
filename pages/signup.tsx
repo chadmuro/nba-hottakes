@@ -25,10 +25,21 @@ export default function Signup() {
     if (error) {
       setError(error.message);
       setLoading(false);
+      return;
+    }
+
+    const { error: dbError } = await supabase.from("users").insert({
+      id: data.user?.id,
+    });
+
+    if (dbError) {
+      setError(dbError.message);
+      setLoading(false);
+      return;
     }
 
     if (data.user && data.session) {
-      router.push("/");
+      router.push("/profile");
     }
   }
 

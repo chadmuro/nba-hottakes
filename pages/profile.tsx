@@ -15,7 +15,7 @@ export default function Profile({ data }: Props) {
   const [updating, setUpdating] = useState(false);
   const [username, setUsername] = useState(data.username);
   const [selectedTeam, setSelectedTeam] = useState<Team | "">(
-    data.favorite_team
+    data.favorite_team ?? ""
   );
   const { refreshHotTakes } = useHotTake();
 
