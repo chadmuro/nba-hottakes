@@ -16,11 +16,6 @@ export default function ToasterComponent() {
   return (
     <Toaster
       position="top-right"
-      containerStyle={{
-        maxWidth: "26rem",
-        marginLeft: "auto",
-        marginRight: "auto",
-      }}
       toastOptions={{
         style: {
           backgroundColor: "rgba(0, 0, 0, 0.7)",

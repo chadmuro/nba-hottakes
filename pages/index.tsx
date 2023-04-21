@@ -35,7 +35,7 @@ export default function Home() {
               {hotTakes.map((hotTake) => (
                 <HotTakeCard key={hotTake.id} hotTake={hotTake} />
               ))}
-              {count && count > hotTakes.length && (
+              {count !== 0 && count && count > hotTakes.length && (
                 <button className="btn btn-secondary btn-sm self-center">
                   More
                 </button>

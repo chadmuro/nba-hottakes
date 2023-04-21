@@ -23,12 +23,14 @@ export default function HotTakeCard({ hotTake }: Props) {
       <div className="relative">
         <div className="avatar">
           <div className="w-14 relative">
-            <Image
-              src={teams[hotTake.user.favorite_team].logo_path}
-              alt="avatar"
-              fill
-              sizes="100%"
-            />
+            {hotTake.user.favorite_team ? (
+              <Image
+                src={teams[hotTake.user.favorite_team].logo_path}
+                alt="avatar"
+                fill
+                sizes="100%"
+              />
+            ) : null}
           </div>
         </div>
         {/* <div className="avatar absolute top-10 -right-2 z-10">

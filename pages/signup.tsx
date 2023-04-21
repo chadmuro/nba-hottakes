@@ -11,6 +11,7 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
 
   const supabase = useSupabaseClient();
@@ -20,26 +21,20 @@ export default function Signup() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: "http://localhost:3000/welcome",
+      },
     });
 
+    console.log(data);
     if (error) {
       setError(error.message);
       setLoading(false);
       return;
     }
 
-    const { error: dbError } = await supabase.from("users").insert({
-      id: data.user?.id,
-    });
-
-    if (dbError) {
-      setError(dbError.message);
-      setLoading(false);
-      return;
-    }
-
-    if (data.user && data.session) {
-      router.push("/profile");
+    if (data.user) {
+      setIsSuccess(true);
     }
   }
 
@@ -67,6 +62,26 @@ export default function Signup() {
                 />
               </svg>
               <span>{error}</span>
+            </div>
+          </div>
+        )}
+        {isSuccess && (
+          <div className="alert alert-info shadow-lg mt-8">
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                className="stroke-current flex-shrink-0 w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              <span>Please check your email for confirmation</span>
             </div>
           </div>
         )}
