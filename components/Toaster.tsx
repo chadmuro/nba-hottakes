@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import toast, { resolveValue, Toaster, useToasterStore } from "react-hot-toast";
+import toast, { Toaster, useToasterStore } from "react-hot-toast";
 
 const TOAST_LIMIT = 3;
 
