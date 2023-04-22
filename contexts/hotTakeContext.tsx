@@ -6,7 +6,8 @@ import {
   useState,
   useEffect,
 } from "react";
-import { HotTake, Reaction, ReactionEnum } from "../types/common";
+import toast from "react-hot-toast";
+import { HotTake, ReactionEnum } from "../types/common";
 
 type HotTakeContextType = {
   loading: boolean;
@@ -19,6 +20,7 @@ type HotTakeContextType = {
     hotTakeId: string,
     reaction?: ReactionEnum
   ) => Promise<void>;
+  deleteHotTake: (hotTakeId: string) => Promise<void>;
 };
 
 export const HotTakeContext = createContext<HotTakeContextType | undefined>(
@@ -120,7 +122,29 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
     });
   }
 
-  const value = { loading, count, hotTakes, refreshHotTakes, updateHotTake };
+  async function deleteHotTake(hotTakeId: string) {
+    const { error } = await supabase
+      .from("hottakes")
+      .delete()
+      .eq("id", hotTakeId);
+
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+
+    toast.success("Hot take deleted");
+    setHotTakes((prevData) => prevData.filter((item) => item.id !== hotTakeId));
+  }
+
+  const value = {
+    loading,
+    count,
+    hotTakes,
+    refreshHotTakes,
+    updateHotTake,
+    deleteHotTake,
+  };
 
   return (
     <HotTakeContext.Provider value={value}>{children}</HotTakeContext.Provider>
