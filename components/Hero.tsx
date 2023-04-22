@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { useSession } from "@supabase/auth-helpers-react";
+import { useSession, useSessionContext } from "@supabase/auth-helpers-react";
 
 export default function Hero() {
   const session = useSession();
+  const { isLoading } = useSessionContext();
 
   return (
     <div
@@ -21,7 +22,7 @@ export default function Hero() {
             <h4>❄️ = Cold take</h4>
             <h4>🗑 = Trash</h4>
           </div>
-          {session ? (
+          {isLoading ? null : session ? (
             <Link href="/new-post" className="btn btn-primary">
               New Post
             </Link>

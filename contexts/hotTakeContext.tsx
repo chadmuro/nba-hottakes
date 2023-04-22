@@ -45,8 +45,7 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
             { count: "exact" }
           )
           .neq("deleted", "1")
-          .order("created_at", { ascending: false })
-          .limit(5);
+          .order("created_at", { ascending: false });
 
         setHotTakes(data as HotTake[]);
         setCount(numberOfHotTakes);
@@ -71,8 +70,7 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
           { count: "exact" }
         )
         .neq("deleted", "1")
-        .order("created_at", { ascending: false })
-        .limit(5);
+        .order("created_at", { ascending: false });
 
       setHotTakes(data as HotTake[]);
       setCount(numberOfHotTakes);
