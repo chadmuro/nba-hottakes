@@ -20,7 +20,7 @@ export default function Signup() {
       email,
       password,
       options: {
-        emailRedirectTo: "http://localhost:3000/welcome",
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_URL}welcome`,
       },
     });
 
