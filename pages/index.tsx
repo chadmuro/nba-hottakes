@@ -4,6 +4,7 @@ import Hero from "../components/Hero";
 import HotTakeCard from "../components/HotTake/HotTake";
 import { useHotTake } from "../contexts/hotTakeContext";
 import DeleteHotTakeModal from "../components/Modal/DeleteHotTakeModal";
+import Loading from "../components/Loading";
 
 export default function Home() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -33,7 +34,7 @@ export default function Home() {
           <Hero />
           <div className="mt-16 max-w-screen-sm flex flex-col justify-center">
             {loading ? (
-              <p>Loading...</p>
+              <Loading />
             ) : (
               <>
                 {/* <button
