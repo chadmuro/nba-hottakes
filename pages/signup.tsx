@@ -25,7 +25,6 @@ export default function Signup() {
       },
     });
 
-    console.log(data);
     if (error) {
       setError(error.message);
       setLoading(false);

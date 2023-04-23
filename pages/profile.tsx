@@ -52,36 +52,46 @@ export default function Profile({ data }: Props) {
   return (
     <Layout>
       <div className="w-full prose flex flex-col items-center">
-        <h1>Profile</h1>
+        <h1 className="mt-4">Profile</h1>
         <form
           className="w-full flex flex-col items-cente max-w-sm gap-4"
           onSubmit={onSubmit}
         >
-          <input
-            required
-            type="username"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="input input-bordered input-primary w-full"
-          />
-          <select
-            required
-            className="select select-primary w-full"
-            value={selectedTeam}
-            onChange={(e) => onSelect(e)}
-          >
-            <option disabled value="">
-              Favorite team
-            </option>
-            {Object.values(teams).map((team) => {
-              return (
-                <option key={team.id} value={team.id}>
-                  {team.full_name}
-                </option>
-              );
-            })}
-          </select>
+          <div>
+            <label className="label">
+              <span className="label-text">Username</span>
+            </label>
+            <input
+              required
+              type="username"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="input input-bordered input-primary w-full"
+            />
+          </div>
+          <div>
+            <label className="label">
+              <span className="label-text">Choose your favorite team</span>
+            </label>
+            <select
+              required
+              className="select select-primary w-full"
+              value={selectedTeam}
+              onChange={(e) => onSelect(e)}
+            >
+              <option disabled value="">
+                Favorite team
+              </option>
+              {Object.values(teams).map((team) => {
+                return (
+                  <option key={team.id} value={team.id}>
+                    {team.full_name}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
           <button type="submit" className="btn btn-primary" disabled={updating}>
             Submit
           </button>

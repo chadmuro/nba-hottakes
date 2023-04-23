@@ -36,12 +36,12 @@ export default function Home() {
               <p>Loading...</p>
             ) : (
               <>
-                <button
+                {/* <button
                   className="btn btn-secondary btn-sm mb-4 self-end"
                   onClick={refreshHotTakes}
                 >
                   Refresh HotTakes
-                </button>
+                </button> */}
                 {hotTakes.map((hotTake) => (
                   <HotTakeCard
                     key={hotTake.id}
