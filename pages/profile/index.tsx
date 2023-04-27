@@ -2,10 +2,10 @@ import { useState } from "react";
 import { GetServerSidePropsContext } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { toast } from "react-hot-toast";
-import Layout from "../components/Layout";
-import { Team, teams } from "../types/teams";
-import { ResponseData, User } from "../types/common";
-import { useHotTake } from "../contexts/hotTakeContext";
+import Layout from "../../components/Layout";
+import { Team, teams } from "../../types/teams";
+import { ResponseData, User } from "../../types/common";
+import { useHotTake } from "../../contexts/hotTakeContext";
 
 interface Props {
   data: User;

@@ -36,13 +36,23 @@ export default function Header() {
           {session ? (
             <>
               <li>
-                <Link href="/profile" className="justify-between">
-                  Profile
+                <Link href="/profile/hottakes" className="justify-between">
+                  Hot Takes
+                </Link>
+              </li>
+              <li>
+                <Link href="/profile/reactions" className="justify-between">
+                  Reactions
                 </Link>
               </li>
               <li>
                 <Link href="/new-post" className="justify-between">
                   New Post
+                </Link>
+              </li>
+              <li>
+                <Link href="/profile" className="justify-between">
+                  Profile
                 </Link>
               </li>
               <li>
