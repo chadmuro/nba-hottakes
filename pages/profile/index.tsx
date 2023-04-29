@@ -5,7 +5,6 @@ import { toast } from "react-hot-toast";
 import Layout from "../../components/Layout";
 import { Team, teams } from "../../types/teams";
 import { ResponseData, User } from "../../types/common";
-import { useHotTake } from "../../contexts/hotTakeContext";
 
 interface Props {
   data: User;
@@ -17,7 +16,6 @@ export default function Profile({ data }: Props) {
   const [selectedTeam, setSelectedTeam] = useState<Team | "">(
     data.favorite_team ?? ""
   );
-  const { refreshHotTakes } = useHotTake();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     setUpdating(true);
@@ -36,7 +34,6 @@ export default function Profile({ data }: Props) {
     const responseData: ResponseData<User> = await response.json();
 
     if (responseData.type === "success") {
-      refreshHotTakes();
       toast.success("Profile updated!");
     } else {
       toast.error(responseData.error.message);

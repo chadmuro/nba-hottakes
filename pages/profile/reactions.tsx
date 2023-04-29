@@ -1,25 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import HotTakeCard from "../../components/HotTake/HotTake";
 import { useHotTake } from "../../contexts/hotTakeContext";
 import DeleteHotTakeModal from "../../components/Modal/DeleteHotTakeModal";
-import Loading from "../../components/Loading";
 import { GetServerSidePropsContext } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { useReaction } from "../../contexts/reactionContext";
+import { HotTake } from "../../types/common";
 
-export default function MyReactions() {
+export default function MyReactions({ hotTakes }: { hotTakes: HotTake[] }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const { hotTakes, loading, deleteHotTake } = useHotTake();
-  const { reactions } = useReaction();
+  const [reactionHotTakes, setReactionHotTakes] = useState(hotTakes);
+  const { deleteHotTake } = useHotTake();
 
-  const hotTakeReactions = reactions.map((reaction) => reaction.hottake);
-  // @ts-ignore
-  const myReactions = [...new Set(hotTakeReactions)];
-
-  const myHotTakes = hotTakes.filter((hotTake) =>
-    myReactions.includes(hotTake.id)
-  );
+  console.log(hotTakes);
 
   function closeDeleteModal() {
     setSelectedId(null);
@@ -41,20 +34,14 @@ export default function MyReactions() {
       <Layout>
         <div className="max-w-screen-xl w-full flex flex-col items-center prose">
           <h1 className="mt-4">My Reactions</h1>
-          <div className="max-w-screen-sm flex flex-col justify-center not-prose">
-            {loading ? (
-              <Loading />
-            ) : (
-              <>
-                {myHotTakes.map((hotTake) => (
-                  <HotTakeCard
-                    key={hotTake.id}
-                    hotTake={hotTake}
-                    setSelectedId={setSelectedId}
-                  />
-                ))}
-              </>
-            )}
+          <div className="max-w-screen-sm w-full flex flex-col justify-center not-prose">
+            {reactionHotTakes.map((hotTake) => (
+              <HotTakeCard
+                key={hotTake.id}
+                hotTake={hotTake}
+                setSelectedId={setSelectedId}
+              />
+            ))}
           </div>
         </div>
       </Layout>
@@ -78,7 +65,27 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
+  const { data } = await supabase
+    .from("reactions")
+    .select(`id, reaction, hottake`)
+    .eq("user", session.user.id);
+
+  const reactionIds = data?.map((reaction) => reaction.hottake);
+
+  const { data: hotTakeData } = await supabase
+    .from("hottakes")
+    .select(
+      `id, created_at, message, linked_teams, user(id, username, favorite_team), reactions(id, reaction)`
+    )
+    .neq("deleted", "1")
+    .in("id", reactionIds as string[])
+    .order("created_at", { ascending: false });
+
+  console.log(hotTakeData);
+
   return {
-    props: {},
+    props: {
+      hotTakes: hotTakeData,
+    },
   };
 };

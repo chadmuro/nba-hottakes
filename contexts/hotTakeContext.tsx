@@ -1,23 +1,13 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import dayjs from "dayjs";
-import {
-  createContext,
-  PropsWithChildren,
-  useContext,
-  useState,
-  useEffect,
-} from "react";
+import { createContext, PropsWithChildren, useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { HotTake, ReactionEnum } from "../types/common";
-
-export type SearchPeriod = "week" | "month" | "year" | "alltime";
-export type FilterSort = "recent" | "hottest" | "coldest" | "trashest";
 
 type HotTakeContextType = {
   loading: boolean;
   hotTakes: HotTake[];
   count: number | null;
-  refreshHotTakes: () => Promise<void>;
+  getHotTakes: (searchPeriod: string) => Promise<void>;
   updateHotTake: (
     reactionId: string,
     type: "add" | "delete",
@@ -25,10 +15,6 @@ type HotTakeContextType = {
     reaction?: ReactionEnum
   ) => Promise<void>;
   deleteHotTake: (hotTakeId: string) => Promise<void>;
-  period: SearchPeriod;
-  setPeriod: React.Dispatch<React.SetStateAction<SearchPeriod>>;
-  sort: FilterSort;
-  setSort: React.Dispatch<React.SetStateAction<FilterSort>>;
 };
 
 export const HotTakeContext = createContext<HotTakeContextType | undefined>(
@@ -37,63 +23,15 @@ export const HotTakeContext = createContext<HotTakeContextType | undefined>(
 
 const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
   const [loading, setLoading] = useState(false);
-  const [period, setPeriod] = useState<SearchPeriod>("week");
-  const [sort, setSort] = useState<FilterSort>("recent");
 
   const [count, setCount] = useState<number | null>(null);
   const [hotTakes, setHotTakes] = useState<HotTake[]>([]);
 
   const supabase = useSupabaseClient();
 
-  let searchPeriod: string | undefined = dayjs()
-    .subtract(1, "week")
-    .toISOString();
-  if (period === "month") {
-    searchPeriod = dayjs().subtract(1, "month").toISOString();
-  } else if (period === "year") {
-    searchPeriod = dayjs().subtract(1, "year").toISOString();
-  } else if (period === "alltime") {
-    searchPeriod = dayjs()
-      .set("year", 2023)
-      .set("month", 3)
-      .set("date", 1)
-      .toISOString();
-  }
-
-  useEffect(() => {
-    async function getHotTakes() {
-      try {
-        setLoading(true);
-        setSort("recent");
-        const { data, count: numberOfHotTakes } = await supabase
-          .from("hottakes")
-          .select(
-            `id, created_at, message, linked_teams, user(id, username, favorite_team), reactions(id, reaction)`,
-            { count: "exact" }
-          )
-          .neq("deleted", "1")
-          .gt("created_at", searchPeriod)
-          .order("created_at", { ascending: false });
-
-        setHotTakes(data as HotTake[]);
-        setCount(numberOfHotTakes);
-      } catch (err) {
-        setCount(null);
-        setHotTakes([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    console.log("fetch hotTakes");
-    getHotTakes();
-    // TODO: Fix useEffect dependency array
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [supabase, period]);
-
-  async function refreshHotTakes() {
+  async function getHotTakes(searchPeriod: string) {
     try {
       setLoading(true);
-      setSort("recent");
       const { data, count: numberOfHotTakes } = await supabase
         .from("hottakes")
         .select(
@@ -171,13 +109,9 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
     loading,
     count,
     hotTakes,
-    refreshHotTakes,
+    getHotTakes,
     updateHotTake,
     deleteHotTake,
-    period,
-    setPeriod,
-    sort,
-    setSort,
   };
 
   return (

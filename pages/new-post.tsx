@@ -5,7 +5,6 @@ import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { toast } from "react-hot-toast";
 import Layout from "../components/Layout";
 import { Team, teams } from "../types/teams";
-import { useHotTake } from "../contexts/hotTakeContext";
 import { HotTake, ResponseData } from "../types/common";
 
 const HOT_TAKE_LENGTH = 180;
@@ -16,7 +15,6 @@ export default function NewPost() {
   const [selectedTeam, setSelectedTeam] = useState<Team | "">("");
   const [hotTakeLengthError, setHotTakeLengthError] = useState(false);
   const [posting, setPosting] = useState(false);
-  const { refreshHotTakes } = useHotTake();
 
   function onChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setHotTake(e.target.value);
@@ -48,7 +46,6 @@ export default function NewPost() {
 
     if (responseData.type === "success") {
       toast.success("New hot take added!");
-      refreshHotTakes();
       router.push("/");
     } else {
       toast.error(responseData.error.message);

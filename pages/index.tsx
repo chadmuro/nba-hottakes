@@ -2,59 +2,47 @@ import { useState, useEffect } from "react";
 import Layout from "../components/Layout";
 import Hero from "../components/Hero";
 import HotTakeCard from "../components/HotTake/HotTake";
-import {
-  FilterSort,
-  SearchPeriod,
-  useHotTake,
-} from "../contexts/hotTakeContext";
+import { useHotTake } from "../contexts/hotTakeContext";
 import DeleteHotTakeModal from "../components/Modal/DeleteHotTakeModal";
 import Loading from "../components/Loading";
-import { HotTake, ReactionEnum } from "../types/common";
+import { HotTake } from "../types/common";
 import dayjs from "dayjs";
+import {
+  compareRecent,
+  compareHottest,
+  compareColdest,
+  compareTrashest,
+} from "../utils/sortUtils";
 
-function compareHottest(a: HotTake, b: HotTake) {
-  return (
-    b.reactions.filter((reaction) => reaction.reaction === ReactionEnum.fire)
-      .length -
-    a.reactions.filter((reaction) => reaction.reaction === ReactionEnum.fire)
-      .length
-  );
-}
-function compareColdest(a: HotTake, b: HotTake) {
-  return (
-    b.reactions.filter((reaction) => reaction.reaction === ReactionEnum.cold)
-      .length -
-    a.reactions.filter((reaction) => reaction.reaction === ReactionEnum.cold)
-      .length
-  );
-}
-function compareTrashest(a: HotTake, b: HotTake) {
-  return (
-    b.reactions.filter((reaction) => reaction.reaction === ReactionEnum.trash)
-      .length -
-    a.reactions.filter((reaction) => reaction.reaction === ReactionEnum.trash)
-      .length
-  );
-}
-function compareRecent(a: HotTake, b: HotTake) {
-  return dayjs(b.created_at).valueOf() - dayjs(a.created_at).valueOf();
-}
+export type SearchPeriod = "week" | "month" | "year" | "alltime";
+export type FilterSort = "recent" | "hottest" | "coldest" | "trashest";
 
 export default function Home() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [sortedHotTakes, setSortedHotTakes] = useState<HotTake[]>([]);
-  const {
-    hotTakes,
-    count,
-    loading,
-    deleteHotTake,
-    period,
-    setPeriod,
-    sort,
-    setSort,
-  } = useHotTake();
+  const [period, setPeriod] = useState<SearchPeriod>("week");
+  const [sort, setSort] = useState<FilterSort>("recent");
+  const { getHotTakes, hotTakes, count, loading, deleteHotTake } = useHotTake();
 
-  // TODO: Move sortedHotTakes into hotTakeContext
+  let searchPeriod = dayjs().subtract(1, "week").toISOString();
+  if (period === "month") {
+    searchPeriod = dayjs().subtract(1, "month").toISOString();
+  } else if (period === "year") {
+    searchPeriod = dayjs().subtract(1, "year").toISOString();
+  } else if (period === "alltime") {
+    searchPeriod = dayjs()
+      .set("year", 2023)
+      .set("month", 3)
+      .set("date", 1)
+      .toISOString();
+  }
+
+  useEffect(() => {
+    console.log("fetch hotTakes");
+    getHotTakes(searchPeriod);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [period]);
+
   useEffect(() => {
     setSortedHotTakes(hotTakes);
   }, [hotTakes]);
