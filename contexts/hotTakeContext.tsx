@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { HotTake, ReactionEnum } from "../types/common";
 
 export type SearchPeriod = "week" | "month" | "year" | "alltime";
+export type FilterSort = "recent" | "hottest" | "coldest" | "trashest";
 
 type HotTakeContextType = {
   loading: boolean;
@@ -26,6 +27,8 @@ type HotTakeContextType = {
   deleteHotTake: (hotTakeId: string) => Promise<void>;
   period: SearchPeriod;
   setPeriod: React.Dispatch<React.SetStateAction<SearchPeriod>>;
+  sort: FilterSort;
+  setSort: React.Dispatch<React.SetStateAction<FilterSort>>;
 };
 
 export const HotTakeContext = createContext<HotTakeContextType | undefined>(
@@ -35,6 +38,8 @@ export const HotTakeContext = createContext<HotTakeContextType | undefined>(
 const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
   const [loading, setLoading] = useState(false);
   const [period, setPeriod] = useState<SearchPeriod>("week");
+  const [sort, setSort] = useState<FilterSort>("recent");
+
   const [count, setCount] = useState<number | null>(null);
   const [hotTakes, setHotTakes] = useState<HotTake[]>([]);
 
@@ -59,6 +64,7 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
     async function getHotTakes() {
       try {
         setLoading(true);
+        setSort("recent");
         const { data, count: numberOfHotTakes } = await supabase
           .from("hottakes")
           .select(
@@ -87,6 +93,7 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
   async function refreshHotTakes() {
     try {
       setLoading(true);
+      setSort("recent");
       const { data, count: numberOfHotTakes } = await supabase
         .from("hottakes")
         .select(
@@ -168,6 +175,8 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
     deleteHotTake,
     period,
     setPeriod,
+    sort,
+    setSort,
   };
 
   return (
