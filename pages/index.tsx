@@ -38,7 +38,6 @@ export default function Home() {
   }
 
   useEffect(() => {
-    console.log("fetch hotTakes");
     getHotTakes(searchPeriod);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period]);

@@ -13,8 +13,6 @@ export default function MyHotTakes() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { hotTakes, loading, deleteHotTake, getMyHotTakes } = useHotTake();
 
-  console.log(hotTakes);
-
   useEffect(() => {
     if (session) {
       getMyHotTakes(session?.user.id);

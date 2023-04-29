@@ -5,14 +5,21 @@ import { useHotTake } from "../../contexts/hotTakeContext";
 import DeleteHotTakeModal from "../../components/Modal/DeleteHotTakeModal";
 import { GetServerSidePropsContext } from "next";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { HotTake } from "../../types/common";
+import { useSession } from "@supabase/auth-helpers-react";
+import Loading from "../../components/Loading";
 
-export default function MyReactions({ hotTakes }: { hotTakes: HotTake[] }) {
+export default function MyReactions() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [reactionHotTakes, setReactionHotTakes] = useState(hotTakes);
-  const { deleteHotTake } = useHotTake();
+  const { deleteHotTake, getMyReactions, hotTakes, loading } = useHotTake();
+  const session = useSession();
 
-  console.log(hotTakes);
+  useEffect(() => {
+    if (session) {
+      getMyReactions(session?.user.id);
+    }
+    // TODO: Update useEffect dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   function closeDeleteModal() {
     setSelectedId(null);
@@ -35,13 +42,19 @@ export default function MyReactions({ hotTakes }: { hotTakes: HotTake[] }) {
         <div className="max-w-screen-xl w-full flex flex-col items-center prose">
           <h1 className="mt-4">My Reactions</h1>
           <div className="max-w-screen-sm w-full flex flex-col justify-center not-prose">
-            {reactionHotTakes.map((hotTake) => (
-              <HotTakeCard
-                key={hotTake.id}
-                hotTake={hotTake}
-                setSelectedId={setSelectedId}
-              />
-            ))}
+            {loading ? (
+              <Loading />
+            ) : (
+              <>
+                {hotTakes.map((hotTake) => (
+                  <HotTakeCard
+                    key={hotTake.id}
+                    hotTake={hotTake}
+                    setSelectedId={setSelectedId}
+                  />
+                ))}
+              </>
+            )}
           </div>
         </div>
       </Layout>
@@ -65,27 +78,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     };
   }
 
-  const { data } = await supabase
-    .from("reactions")
-    .select(`id, reaction, hottake`)
-    .eq("user", session.user.id);
-
-  const reactionIds = data?.map((reaction) => reaction.hottake);
-
-  const { data: hotTakeData } = await supabase
-    .from("hottakes")
-    .select(
-      `id, created_at, message, linked_teams, user(id, username, favorite_team), reactions(id, reaction)`
-    )
-    .neq("deleted", "1")
-    .in("id", reactionIds as string[])
-    .order("created_at", { ascending: false });
-
-  console.log(hotTakeData);
-
   return {
-    props: {
-      hotTakes: hotTakeData,
-    },
+    props: {},
   };
 };

@@ -1,4 +1,4 @@
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { HotTake, ReactionEnum } from "../types/common";
@@ -9,6 +9,7 @@ type HotTakeContextType = {
   count: number | null;
   getHotTakes: (searchPeriod: string) => Promise<void>;
   getMyHotTakes: (userId: string) => Promise<void>;
+  getMyReactions: (userId: string) => Promise<void>;
   updateHotTake: (
     reactionId: string,
     type: "add" | "delete",
@@ -26,7 +27,6 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
   const [loading, setLoading] = useState(false);
   const [count, setCount] = useState<number | null>(null);
   const [hotTakes, setHotTakes] = useState<HotTake[]>([]);
-  const session = useSession();
 
   const supabase = useSupabaseClient();
 
@@ -56,21 +56,43 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
   async function getMyHotTakes(userId: string) {
     try {
       setLoading(true);
-      const { data, count: numberOfHotTakes } = await supabase
+      const { data } = await supabase
         .from("hottakes")
         .select(
-          `id, created_at, message, linked_teams, user(id, username, favorite_team), reactions(id, reaction)`,
-          { count: "exact" }
+          `id, created_at, message, linked_teams, user(id, username, favorite_team), reactions(id, reaction)`
         )
         .neq("deleted", "1")
         .eq("user", userId)
         .order("created_at", { ascending: false });
 
       setHotTakes(data as HotTake[]);
-      setCount(numberOfHotTakes);
     } catch (err) {
-      setCount(null);
-      setHotTakes([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function getMyReactions(userId: string) {
+    try {
+      setLoading(true);
+      const { data } = await supabase
+        .from("reactions")
+        .select(`id, reaction, hottake`)
+        .eq("user", userId);
+
+      const reactionIds = data?.map((reaction) => reaction.hottake);
+
+      const { data: hotTakeData } = await supabase
+        .from("hottakes")
+        .select(
+          `id, created_at, message, linked_teams, user(id, username, favorite_team), reactions(id, reaction)`
+        )
+        .neq("deleted", "1")
+        .in("id", reactionIds as string[])
+        .order("created_at", { ascending: false });
+
+      setHotTakes(hotTakeData as HotTake[]);
+    } catch (err) {
     } finally {
       setLoading(false);
     }
@@ -135,6 +157,7 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
     hotTakes,
     getHotTakes,
     getMyHotTakes,
+    getMyReactions,
     updateHotTake,
     deleteHotTake,
   };
