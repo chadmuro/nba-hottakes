@@ -1,4 +1,4 @@
-import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { createContext, PropsWithChildren, useContext, useState } from "react";
 import toast from "react-hot-toast";
 import { HotTake, ReactionEnum } from "../types/common";
@@ -8,6 +8,7 @@ type HotTakeContextType = {
   hotTakes: HotTake[];
   count: number | null;
   getHotTakes: (searchPeriod: string) => Promise<void>;
+  getMyHotTakes: (userId: string) => Promise<void>;
   updateHotTake: (
     reactionId: string,
     type: "add" | "delete",
@@ -23,9 +24,9 @@ export const HotTakeContext = createContext<HotTakeContextType | undefined>(
 
 const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
   const [loading, setLoading] = useState(false);
-
   const [count, setCount] = useState<number | null>(null);
   const [hotTakes, setHotTakes] = useState<HotTake[]>([]);
+  const session = useSession();
 
   const supabase = useSupabaseClient();
 
@@ -40,6 +41,29 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
         )
         .neq("deleted", "1")
         .gt("created_at", searchPeriod)
+        .order("created_at", { ascending: false });
+
+      setHotTakes(data as HotTake[]);
+      setCount(numberOfHotTakes);
+    } catch (err) {
+      setCount(null);
+      setHotTakes([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function getMyHotTakes(userId: string) {
+    try {
+      setLoading(true);
+      const { data, count: numberOfHotTakes } = await supabase
+        .from("hottakes")
+        .select(
+          `id, created_at, message, linked_teams, user(id, username, favorite_team), reactions(id, reaction)`,
+          { count: "exact" }
+        )
+        .neq("deleted", "1")
+        .eq("user", userId)
         .order("created_at", { ascending: false });
 
       setHotTakes(data as HotTake[]);
@@ -110,6 +134,7 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
     count,
     hotTakes,
     getHotTakes,
+    getMyHotTakes,
     updateHotTake,
     deleteHotTake,
   };

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Layout from "../../components/Layout";
 import HotTakeCard from "../../components/HotTake/HotTake";
 import { useHotTake } from "../../contexts/hotTakeContext";
@@ -11,11 +11,17 @@ import { useSession } from "@supabase/auth-helpers-react";
 export default function MyHotTakes() {
   const session = useSession();
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const { hotTakes, loading, deleteHotTake } = useHotTake();
+  const { hotTakes, loading, deleteHotTake, getMyHotTakes } = useHotTake();
 
-  const myHotTakes = hotTakes.filter(
-    (hotTake) => hotTake.user.id === session?.user.id
-  );
+  console.log(hotTakes);
+
+  useEffect(() => {
+    if (session) {
+      getMyHotTakes(session?.user.id);
+    }
+    // TODO: Update useEffect dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session]);
 
   function closeDeleteModal() {
     setSelectedId(null);
@@ -37,12 +43,12 @@ export default function MyHotTakes() {
       <Layout>
         <div className="max-w-screen-xl w-full flex flex-col items-center prose">
           <h1 className="mt-4">My Hot Takes</h1>
-          <div className="max-w-screen-sm flex flex-col justify-center not-prose">
+          <div className="max-w-screen-sm w-full flex flex-col justify-center not-prose">
             {loading ? (
               <Loading />
             ) : (
               <>
-                {myHotTakes.map((hotTake) => (
+                {hotTakes.map((hotTake) => (
                   <HotTakeCard
                     key={hotTake.id}
                     hotTake={hotTake}
