@@ -1,4 +1,5 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import dayjs from "dayjs";
 import {
   createContext,
   PropsWithChildren,
@@ -8,6 +9,8 @@ import {
 } from "react";
 import toast from "react-hot-toast";
 import { HotTake, ReactionEnum } from "../types/common";
+
+export type SearchPeriod = "week" | "month" | "year" | "alltime";
 
 type HotTakeContextType = {
   loading: boolean;
@@ -21,6 +24,8 @@ type HotTakeContextType = {
     reaction?: ReactionEnum
   ) => Promise<void>;
   deleteHotTake: (hotTakeId: string) => Promise<void>;
+  period: SearchPeriod;
+  setPeriod: React.Dispatch<React.SetStateAction<SearchPeriod>>;
 };
 
 export const HotTakeContext = createContext<HotTakeContextType | undefined>(
@@ -29,10 +34,26 @@ export const HotTakeContext = createContext<HotTakeContextType | undefined>(
 
 const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
   const [loading, setLoading] = useState(false);
+  const [period, setPeriod] = useState<SearchPeriod>("week");
   const [count, setCount] = useState<number | null>(null);
   const [hotTakes, setHotTakes] = useState<HotTake[]>([]);
 
   const supabase = useSupabaseClient();
+
+  let searchPeriod: string | undefined = dayjs()
+    .subtract(1, "week")
+    .toISOString();
+  if (period === "month") {
+    searchPeriod = dayjs().subtract(1, "month").toISOString();
+  } else if (period === "year") {
+    searchPeriod = dayjs().subtract(1, "year").toISOString();
+  } else if (period === "alltime") {
+    searchPeriod = dayjs()
+      .set("year", 2023)
+      .set("month", 3)
+      .set("date", 1)
+      .toISOString();
+  }
 
   useEffect(() => {
     async function getHotTakes() {
@@ -45,6 +66,7 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
             { count: "exact" }
           )
           .neq("deleted", "1")
+          .gt("created_at", searchPeriod)
           .order("created_at", { ascending: false });
 
         setHotTakes(data as HotTake[]);
@@ -58,7 +80,9 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
     }
     console.log("fetch hotTakes");
     getHotTakes();
-  }, [supabase]);
+    // TODO: Fix useEffect dependency array
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [supabase, period]);
 
   async function refreshHotTakes() {
     try {
@@ -142,6 +166,8 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
     refreshHotTakes,
     updateHotTake,
     deleteHotTake,
+    period,
+    setPeriod,
   };
 
   return (
