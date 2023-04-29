@@ -101,6 +101,7 @@ const HotTakeProvider = ({ children }: PropsWithChildren<{}>) => {
           { count: "exact" }
         )
         .neq("deleted", "1")
+        .gt("created_at", searchPeriod)
         .order("created_at", { ascending: false });
 
       setHotTakes(data as HotTake[]);
