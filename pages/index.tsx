@@ -38,7 +38,9 @@ export default function Home() {
   }
 
   useEffect(() => {
+    console.log("fetch");
     getHotTakes(searchPeriod);
+    setSort("recent");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period]);
 
